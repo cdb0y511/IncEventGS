@@ -1,6 +1,33 @@
 import sys
 import os
-#os.environ['TCNN_CUDA_ARCHITECTURES'] = '86'
+os.environ['TCNN_CUDA_ARCHITECTURES'] = '120'
+os.environ['TORCH_CUDA_ARCH_LIST'] = '12.0'
+# 确保 CONDA_PREFIX 已经指向你的环境根目录
+conda_prefix = os.environ.get("CONDA_PREFIX")
+if not conda_prefix:
+    raise RuntimeError("请先激活 conda 环境，再运行此脚本")
+
+# Conda 下两个包含 cuda_runtime_api.h 的目录
+cuda_inc_paths = [
+    os.path.join(conda_prefix, "targets", "x86_64-linux", "include"),
+    os.path.join(conda_prefix,
+                 "lib", f"python{sys.version_info.major}.{sys.version_info.minor}",
+                 "site-packages", "nvidia", "cuda_runtime", "include"),
+]
+
+# 只保留真实存在的目录
+cuda_inc_paths = [p for p in cuda_inc_paths if os.path.isdir(p)]
+if not cuda_inc_paths:
+    raise RuntimeError(f"在 {conda_prefix} 下没找到 CUDA include 目录，请检查安装")
+
+# 拼接成环境变量值，前面优先
+old = os.environ.get("CPLUS_INCLUDE_PATH", "")
+new = os.pathsep.join(cuda_inc_paths + ([old] if old else []))
+os.environ["CPLUS_INCLUDE_PATH"] = new
+os.environ["CPATH"] = new
+
+# （可选）打印确认
+print("[INFO] CPLUS_INCLUDE_PATH =", os.environ["CPLUS_INCLUDE_PATH"])
 
 # Package imports
 import torch
@@ -15,7 +42,6 @@ import json
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 torch.multiprocessing.set_sharing_strategy('file_system')
-
 import imageio
 import pypose as pp
 

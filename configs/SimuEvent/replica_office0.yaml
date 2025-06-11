@@ -38,7 +38,7 @@ use_mask_event_loss: True
 
 # depth estimation
 depth_estimation_init: 1 #0: don't use depth; 1: estimate depth during initialization; 2: use pre-estimated depth
-depthEst_pretrained_model_path: /run/determined/workdir/datasets/event_slam/CVPR2025/open_data/depthEst_pretrained_model/models--Bingxin--Marigold/snapshots/0f4e0021da7a153804301f8b988e8b7b4daf056b
+depthEst_pretrained_model_path: /home/cd/ASources/depthEst_pretrained_model/models--Bingxin--Marigold/snapshots/0f4e0021da7a153804301f8b988e8b7b4daf056b
 
 only_track_event_area: False
 use_gt_pose_to_opt: False
@@ -51,7 +51,7 @@ eval_end_idx: 119
 eval_step_size: 2
 
 data:
-  datadir: /run/determined/workdir/datasets/event_slam/CVPR2025/open_data/event_replica/office0
+  datadir: /home/cd/dataset/event_replica/office0
   scene: None
   output: output/final/office0
   exp_name: demo
